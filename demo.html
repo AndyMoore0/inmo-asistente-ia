@@ -123,7 +123,7 @@
             flex-direction: column;
             gap: 12px;
             background: #fafafa;
-            padding-bottom: 80px; /* Espacio para que el botón flotante no tape mensajes */
+            padding-bottom: 80px;
         }
 
         .bubble {
@@ -151,7 +151,6 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* Botón Fijo de Agendar que flota sobre el chat */
         .floating-action-area {
             position: absolute;
             bottom: 60px;
@@ -180,11 +179,6 @@
             gap: 6px;
         }
 
-        .btn-agendar:hover {
-            background: var(--primary-hover);
-        }
-
-        /* Formulario de Calificación (Oculto al principio, aparece al tocar el botón) */
         .lead-modal {
             position: absolute;
             top: 0;
@@ -208,97 +202,19 @@
             animation: slideUp 0.3s ease-out;
         }
 
-        .modal-content h3 {
-            font-size: 1.05rem;
-            margin-bottom: 5px;
-            color: var(--text-dark);
-        }
+        .modal-content h3 { font-size: 1.05rem; margin-bottom: 5px; color: var(--text-dark); }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; color: var(--text-muted); }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; outline: none; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-cancel { background: #f3f4f6; color: var(--text-dark); border: none; flex: 1; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+        .btn-confirm { background: var(--success); color: white; border: none; flex: 2; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
 
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--text-muted);
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-cancel {
-            background: #f3f4f6;
-            color: var(--text-dark);
-            border: none;
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .btn-confirm {
-            background: var(--success);
-            color: white;
-            border: none;
-            flex: 2;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        /* Área de Entrada de Texto (Siempre fija abajo) */
         .input-area {
-            padding: 12px 15px;
-            background: white;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            z-index: 10;
+            padding: 12px 15px; background: white; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; z-index: 10;
         }
-
-        .input-area input {
-            flex: 1;
-            padding: 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            font-size: 0.9rem;
-            outline: none;
-            background: #f9fafb;
-        }
-
-        .send-btn {
-            background: var(--brand);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
+        .input-area input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 0.9rem; outline: none; background: #f9fafb; }
+        .send-btn { background: var(--brand); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -348,12 +264,10 @@
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 15px;">
                     Completá tus datos para validar los requisitos de la propiedad con la inmobiliaria.
                 </p>
-                
                 <div class="form-group">
                     <label>Nombre Completo</label>
                     <input type="text" id="leadName" placeholder="Juan Pérez">
                 </div>
-                
                 <div class="form-group">
                     <label>¿Cumplís con los requisitos exigidos?</label>
                     <select id="leadReq">
@@ -361,7 +275,6 @@
                         <option value="no">No llego con los requisitos</option>
                     </select>
                 </div>
-                
                 <div class="modal-buttons">
                     <button class="btn-cancel" onclick="cerrarModal()">Volver al chat</button>
                     <button class="btn-confirm" onclick="submitLead()">Confirmar y Agendar</button>
@@ -378,8 +291,9 @@
             const propiedadId = urlParams.get('id') || 1;
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/propiedades/${propiedadId}`);
-                if (!response.ok) throw new Error("No se encontró el departamento");
+                // CONECTADO CON TU RENDER EN LA NUBE
+                const response = await fetch(`https://inmo-asistente-ia.onrender.com/api/propiedades/${propiedadId}`);
+                if (!response.ok) throw new Error("No se encontró la propiedad");
                 
                 propiedadData = await response.json();
                 
@@ -390,7 +304,7 @@
             } catch (error) {
                 console.error(error);
                 document.getElementById('uiDireccion').innerText = "⚠️ Error al cargar";
-                document.getElementById('uiPrecios').innerText = "Verificá que el servidor Python esté corriendo.";
+                document.getElementById('uiPrecios').innerText = "La propiedad no existe en el servidor.";
             }
         });
 
@@ -412,13 +326,11 @@
             inputEl.value = '';
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/chat', {
+                // CONECTADO CON TU RENDER EN LA NUBE
+                const response = await fetch('https://inmo-asistente-ia.onrender.com/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        propiedad_id: propiedadId,
-                        mensaje_usuario: text
-                    })
+                    body: JSON.stringify({ propiedad_id: propiedadId, mensaje_usuario: text })
                 });
 
                 if (!response.ok) throw new Error("Error en el servidor");
@@ -428,7 +340,7 @@
 
             } catch (error) {
                 console.error(error);
-                appendBubble("⚠️ Hubo un problema al conectar con mi cerebro de IA.", 'ai');
+                appendBubble("⚠️ Hubo un problema al conectar con el servidor de IA.", 'ai');
             }
         }
 
@@ -441,14 +353,8 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // FUNCIONES PARA EL MODAL DE VALIDACIÓN
-        function abrirModal() {
-            document.getElementById('leadModal').style.display = 'flex';
-        }
-
-        function cerrarModal() {
-            document.getElementById('leadModal').style.display = 'none';
-        }
+        function abrirModal() { document.getElementById('leadModal').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('leadModal').style.display = 'none'; }
 
         function submitLead() {
             const name = document.getElementById('leadName').value.trim();
@@ -462,13 +368,12 @@
             cerrarModal();
 
             if (req === 'no') {
-                appendBubble(`Hola <strong>${name}</strong>. El perfil ingresado no califica automáticamente para las exigencias comerciales de este propietario. Te recomendamos consultar otras opciones de nuestra cartera.`, 'ai');
+                appendBubble(`Hola <strong>${name}</strong>. El perfil ingresado no califica automáticamente para las exigencias comerciales de este dpto. Te recomendamos consultar otras opciones de nuestra cartera.`, 'ai');
                 return;
             }
 
             appendBubble(`¡Excelente <strong>${name}</strong>! Perfil aprobado. Tocá el botón verde que apareció abajo para enviar tus datos directamente al WhatsApp del martillero.`, 'ai');
             
-            // Transformar el botón flotante en el pase directo a WhatsApp
             const actionArea = document.querySelector('.floating-action-area');
             const msg = `Hola! Vengo filtrado desde el asistente de IA para el inmueble en ${propiedadData.direccion}. Mi nombre es ${name}, cuento con las garantías solicitadas y quiero coordinar la visita comercial.`;
             
