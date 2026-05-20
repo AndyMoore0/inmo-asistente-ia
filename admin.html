@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - InmoAsistente IA</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #cbd5e1;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea {
+            height: 140px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-box h3 {
+            color: #065f46;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .link-generado {
+            background: white;
+            padding: 8px;
+            border: 1px solid #d1fae5;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            word-break: break-all;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <h1>Alta de Propiedad Inteligente 🏢</h1>
+        <p class="subtitle">Cargá los datos del inmueble para entrenar al asistente de IA.</p>
+
+        <div class="form-group">
+            <label for="direccion">Dirección de la Propiedad</label>
+            <input type="text" id="direccion" placeholder="Ej: Av. Alem 1200, 2do B">
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+            <div class="form-group" style="flex: 1;">
+                <label for="precio">Alquiler Mensual ($)</label>
+                <input type="number" id="precio" placeholder="180000">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="expensas">Expensas Aprox. ($)</label>
+                <input type="number" id="expensas" placeholder="28000">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Ficha de Información para la IA (El "Cerebro")</label>
+            <textarea id="descripcion" placeholder="Escribí acá TODO lo que los clientes suelen preguntar:&#10;- ¿Acepta mascotas?&#10;- ¿Qué garantías piden?&#10;- ¿Tiene cochera, patio, balcón?&#10;- ¿A cuántas cuadras de la UNS/UTN queda?"></textarea>
+        </div>
+
+        <button class="btn-submit" onclick="enviarPropiedad()">Generar Link con IA</button>
+
+        <div id="resultBox" class="result-box">
+            <h3>✅ ¡Propiedad Guardada con Éxito!</h3>
+            <p style="font-size: 0.85rem; color: #047857;">Copiá este link y pegalo en tus publicaciones o mandalo por WhatsApp:</p>
+            <div id="linkGenerado" class="link-generado"></div>
+        </div>
+    </div>
+
+    <script>
+        async function enviarPropiedad() {
+            const direccion = document.getElementById('direccion').value.trim();
+            const precio = parseFloat(document.getElementById('precio').value);
+            const expensas = parseFloat(document.getElementById('expensas').value);
+            const descripcion_completa = document.getElementById('descripcion').value.trim();
+
+            if (!direccion || !precio || !descripcion_completa) {
+                alert("Por favor, completá los campos principales (Dirección, Precio y la Ficha).");
+                return;
+            }
+
+            const datos = {
+                direccion: direccion,
+                precio: precio,
+                expensas: expensas ? expensas : 0,
+                descripcion_completa: descripcion_completa
+            };
+
+            try {
+                // Enviamos los datos a nuestro servidor Python local
+                const response = await fetch('http://127.0.0.1:8000/api/propiedades', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.status === 'success') {
+                    document.getElementById('resultBox').style.display = 'block';
+                    // Simulamos el link que abriría el chat pasándole el ID que generó la base de datos
+                    document.getElementById('linkGenerado').innerText = `file:///C:/.../demo.html?id=${resultado.id}`;
+                } else {
+                    alert("Hubo un error al guardar.");
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("No se pudo conectar con el servidor Python. ¿Te aseguraste de tenerlo corriendo con 'python app.py'?");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Ignorar la base de datos local de prueba
+inmo_database.db
+
+# Ignorar archivos del sistema y entornos virtuales
+__pycache__/
+.env
+.vscode/
