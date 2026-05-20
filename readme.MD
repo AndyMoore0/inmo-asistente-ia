@@ -24,9 +24,12 @@ Una interfaz de usuario con enfoque *mobile-first* optimizada para simular una a
 * **Modularidad:** Al hacer clic en "Agendar Visita", se despliega un formulario interactivo (ventana modal) que pausa el chat para capturar los datos del cliente.
 * **Conversión:** Si el usuario pasa el filtro de requisitos, el sistema inyecta dinámicamente un botón de acción directa hacia WhatsApp con un mensaje pre-armado de alta prioridad.
 
----
+---## 🔮 Próximas Funcionalidades (Roadmap de Desarrollo)
 
-## 📋 Flujo de Datos (Cómo funciona)
+
+Para transformar este MVP en una plataforma SaaS lista para comercializar a gran escala, se planifica la implementación de los siguientes módulos en las próximas fases:1. **🧮 Calculador Inteligente de Costos de Entrada:** Integración de lógica matemática para que la IA calcule automáticamente y en tiempo real el monto total requerido para firmar el contrato (mes de adelanto, depósito, sellados y honorarios notariales), redondeando los valores para mayor claridad del usuario.2. **📉 Simulador de Ajustes de Alquiler:** Incorporación de un módulo predictivo que simule los aumentos del canon locativo mensual en base a proyecciones de los índices oficiales (IPC/ICL) según la periodicidad del contrato, reduciendo la incertidumbre del inquilino.3. **🛡️ Filtro Avanzado y Validación de Garantías:** Evolución del formulario de pre-calificación para evaluar tipos específicos de respaldo (Garantía Propietaria, Seguros de Caución, Recibos de Sueldo) confrontándolos automáticamente contra las exigencias del propietario del inmueble antes de derivar el lead a WhatsApp.4. **🪄 Optimizador de Fichas Técnicas con IA:** Interfaz en el panel de administración para que la agencia pegue textos en crudo o desordenados y el modelo de lenguaje los estructure automáticamente en una descripción atractiva y estandarizada.
+
+---## 📋 Flujo de Datos (Cómo funciona)
 
 | Paso | Componente | Acción |
 | :--- | :--- | :--- |
