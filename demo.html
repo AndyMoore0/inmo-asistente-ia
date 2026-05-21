@@ -291,7 +291,6 @@
             const propiedadId = urlParams.get('id') || 1;
 
             try {
-                // CONECTADO CON TU RENDER EN LA NUBE
                 const response = await fetch(`https://inmo-asistente-ia.onrender.com/api/propiedades/${propiedadId}`);
                 if (!response.ok) throw new Error("No se encontró la propiedad");
                 
@@ -326,11 +325,11 @@
             inputEl.value = '';
 
             try {
-                // CONECTADO CON TU RENDER EN LA NUBE
-                const response = await fetch('https://inmo-asistente-ia.onrender.com/api/chat', {
+                // 🛠️ CORREGIDO: Pegamos a /api/chat/${propiedadId} y mandamos el objeto con la clave "mensaje"
+                const response = await fetch(`https://inmo-asistente-ia.onrender.com/api/chat/${propiedadId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ propiedad_id: propiedadId, mensaje_usuario: text })
+                    body: JSON.stringify({ mensaje: text })
                 });
 
                 if (!response.ok) throw new Error("Error en el servidor");
