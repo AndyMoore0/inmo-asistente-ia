@@ -1,21 +1,13 @@
-import os  
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import sqlite3
+from supabase import create_client, Client
 from groq import Groq
 
-app = FastAPI(title="InmoAsistente API - Backend con IA GRATIS")
+app = FastAPI(title="InmoAsistente API - Backend con Supabase Permanente")
 
-# CONFIGURACIÓN DE GROQ PROFESIONAL (100% limpia para GitHub)
-api_key_env = os.environ.get("GROQ_API_KEY")
-if not api_key_env:
-    # Esto es por si te olvidás de setearla localmente, para que no rompa sin avisar
-    raise RuntimeWarning("ATENCIÓN: No se encontró la variable de entorno GROQ_API_KEY")
-
-client = Groq(api_key=api_key_env)
-
-# Habilitar CORS para que tus archivos HTML locales puedan comunicarse con el servidor
+# Habilitar CORS para conectar tus HTML de GitHub Pages y locales
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,112 +16,90 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Inicializar la base de datos local SQLite
-def init_db():
-    conn = sqlite3.connect("inmo_database.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS propiedades (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            direccion TEXT NOT NULL,
-            precio REAL NOT NULL,
-            expensas REAL NOT NULL,
-            descripcion_completa TEXT NOT NULL
-        )
-    """)
-    conn.commit()
-    conn.close()
+# 🔐 CONFIGURACIÓN DE SEGURIDAD (Variables de Entorno)
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
-init_db()
+if not all([GROQ_API_KEY, SUPABASE_URL, SUPABASE_KEY]):
+    raise RuntimeWarning("ATENCIÓN: Faltan configurar variables de entorno obligatorias.")
 
-# Modelos de datos para las peticiones
-class PropiedadIn(BaseModel):
+# Inicializar clientes de las APIs de la nube
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
+
+# Modelo de datos para recibir propiedades desde el admin.html
+class Propiedad(BaseModel):
     direccion: str
     precio: float
     expensas: float
-    descripcion_completa: str
+    descripcion: str
 
-class ChatIn(BaseModel):
-    propiedad_id: int
-    mensaje_usuario: str
-
-# 1. RUTA PARA GUARDAR UN DEPARTAMENTO (Desde admin.html)
+# 1️⃣ ENDPOINT: Guardar una propiedad en Supabase de forma permanente
 @app.post("/api/propiedades")
-def guardar_propiedad(propiedad: PropiedadIn):
+async def guardar_propiedad(propiedad: Propiedad):
     try:
-        conn = sqlite3.connect("inmo_database.db")
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO propiedades (direccion, precio, expensas, descripcion_completa)
-            VALUES (?, ?, ?, ?)
-        """, (propiedad.direccion, propiedad.precio, propiedad.expensas, propiedad.descripcion_completa))
-        conn.commit()
-        propiedad_id = cursor.lastrowid
-        conn.close()
-        return {"status": "success", "message": "Propiedad guardada", "id": propiedad_id}
+        data, count = supabase.table("propiedades").insert({
+            "direccion": propiedad.direccion,
+            "precio": propiedad.precio,
+            "expensas": propiedad.expensas,
+            "descripcion": propiedad.descripcion
+        }).execute()
+        
+        # Devolvemos el ID que le asignó automáticamente la base de datos
+        nuevo_id = data[1][0]["id"]
+        return {"status": "success", "id": nuevo_id, "message": "Propiedad guardada para siempre"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en Supabase: {str(e)}")
+
+# 2️⃣ ENDPOINT: Buscar una propiedad por ID para el Chatbot
+@app.get("/api/propiedades/{propiedad_id}")
+async def obtener_propiedad(propiedad_id: int):
+    try:
+        response = supabase.table("propiedades").select("*").eq("id", propiedad_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Propiedad no encontrada")
+        return response.data[0]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# 2. RUTA PARA LEER LOS DATOS DE LA PROPIEDAD (Desde demo.html)
-@app.get("/api/propiedades/{propiedad_id}")
-def obtener_propiedad(propiedad_id: int):
-    conn = sqlite3.connect("inmo_database.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT direccion, precio, expensas, descripcion_completa FROM propiedades WHERE id = ?", (propiedad_id,))
-    row = cursor.fetchone()
-    conn.close()
+# 3️⃣ ENDPOINT: El cerebro del Chatbot (IA Groq + Llama 3)
+@app.post("/api/chat/{propiedad_id}")
+async def chat_propiedad(propiedad_id: int, mensaje: dict):
+    # Buscamos la propiedad directo en Supabase
+    prop_resp = supabase.table("propiedades").select("*").eq("id", propiedad_id).execute()
+    if not prop_resp.data:
+        raise HTTPException(status_code=404, detail="Propiedad no encontrada")
     
-    if not row:
-        raise HTTPException(status_code=404, detail="Propiedad no encontrada")
-        
-    return {"direccion": row[0], "precio": row[1], "expensas": row[2], "descripcion_completa": row[3]}
+    propiedad = prop_resp.data[0]
+    user_msg = mensaje.get("mensaje", "")
 
-# 3. RUTA PARA PROCESAR EL CHAT CON IA OPTIMIZADA
-@app.post("/api/chat")
-def chatear_con_ia(chat: ChatIn):
-    conn = sqlite3.connect("inmo_database.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT direccion, precio, expensas, descripcion_completa FROM propiedades WHERE id = ?", (chat.propiedad_id,))
-    row = cursor.fetchone()
-    conn.close()
-
-    if not row:
-        raise HTTPException(status_code=404, detail="Propiedad no encontrada")
-
-    direccion, precio, expensas, descripcion = row[0], row[1], row[2], row[3]
-
-    # Rediseñamos las instrucciones para obligar a la IA a ser coherente y natural
+    # Contexto ultra personalizado para defender las condiciones inmobiliarias
     system_prompt = f"""
-    Sos una asistente humana y súper profesional de una inmobiliaria en Bahía Blanca. Tu tarea es responder dudas sobre el dpto en {direccion}.
-    
-    REGLAS DE ORO PARA TU PERSONALIDAD:
-    1. Hablá de forma natural, fluida y amigable (estilo argentino/bahiense, pero sin exagerar, neutro-cordial).
-    2. Respuestas CORTAS y AL GRANO (máximo 2 o 3 oraciones). No metas discursos eternos de bienvenida si el usuario te dice algo corto como "hola" o "sí".
-    3. Si el usuario te saluda o te dice algo genérico, respondé un saludo corto y preguntale qué duda específica tiene sobre el dpto.
-    4. Usá EXCLUSIVAMENTE estos datos para responder:
-       - Dirección: {direccion}
-       - Alquiler: ${precio}
-       - Expensas: ${expensas}
-       - Detalles cargados: {descripcion}
-    5. Si te preguntan algo que NO está en los detalles de arriba, decí: "Mirá, no tengo ese dato exacto acá en la ficha, pero si querés podés consultarlo directo con el martillero al agendar la visita al final."
+    Sos un asistente virtual experto de una inmobiliaria argentina. Tu objetivo es responder consultas de inquilinos basándote ÚNICAMENTE en la siguiente información de la propiedad.
+    Si te preguntan algo que NO está especificado acá, decí amablemente que no tenés ese dato y que dejen su consulta para que un agente humano los contacte.
+
+    INFORMACIÓN REAL DE LA PROPIEDAD:
+    - Dirección: {propiedad['direccion']}
+    - Alquiler Mensual: ${propiedad['precio']:,} ARS
+    - Expensas: ${propiedad['expensas']:,} ARS
+    - Detalles y Requisitos Excluyentes: {propiedad['descripcion']}
+
+    REGLAS DE ORO:
+    1. Sé cordial, profesional y usá modismos argentinos neutros (che, cómo va, claro, etc.).
+    2. Respondé de forma corta y precisa, ideal para leer rápido desde un celular.
+    3. Si el usuario cumple con el perfil o quiere agendar, indicale amablemente que use el botón de agendar visita.
     """
 
     try:
-        # Llamada a Groq con el modelo Llama 3.1
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+        completion = groq_client.chat.completions.create(
+            model="llama3-8b-8192",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": chat.mensaje_usuario}
+                {"role": "user", "content": user_msg}
             ],
-            temperature=0.4  # Temperatura baja para evitar que invente cosas o se vaya por las ramas
+            temperature=0.5,
         )
-        respuesta_ia = response.choices[0].message.content
-        return {"respuesta": respuesta_ia}
+        return {"respuesta": completion.choices[0].message.content}
     except Exception as e:
-        print("\n❌ ERROR DETECTADO EN GROQ:", str(e), "\n")
-        raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+        raise HTTPException(status_code=500, detail=f"Error en la IA: {str(e)}")
