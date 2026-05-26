@@ -10,73 +10,82 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Esconder barra de scroll manteniendo funcionalidad */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Patrón de fondo estilo chat sutil para romper el blanco básico */
+        .chat-bg {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 0.8px, transparent 0.8px), radial-gradient(#e2e8f0 0.8px, #f8fafc 0.8px);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+        }
     </style>
 </head>
-<body class="bg-slate-100 flex justify-center items-center h-screen w-full antialiased p-0 sm:p-4">
+<body class="bg-slate-900 flex justify-center items-center h-screen w-full antialiased p-0 sm:p-4">
 
-    <div class="w-full max-w-md h-full bg-white shadow-2xl flex flex-col relative overflow-hidden md:h-[92vh] md:rounded-3xl md:border md:border-slate-200">
+    <div class="w-full max-w-md h-full bg-slate-50 flex flex-col relative overflow-hidden md:h-[92vh] md:rounded-[32px] md:border-4 md:border-slate-800 md:shadow-[0_0_80px_-15px_rgba(0,0,0,0.6)]">
         
-        <div class="bg-white px-6 pt-2 pb-1 flex justify-between items-center text-[11px] font-bold text-slate-800 shrink-0">
+        <div class="bg-white px-6 pt-2 pb-1 flex justify-between items-center text-[11px] font-bold text-slate-500 shrink-0 select-none">
             <span>18:40</span>
             <span class="flex items-center gap-1">LTE 🔋</span>
         </div>
 
-        <header class="bg-white border-b border-slate-100 px-5 py-3 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/95 shrink-0">
+        <header class="bg-white/95 border-b border-slate-100 px-5 py-3 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md shrink-0 shadow-sm">
             <div class="flex items-center gap-3">
                 <div class="relative">
-                    <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center border border-indigo-100 shadow-sm text-lg">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center border border-indigo-500 shadow-md shadow-indigo-600/20 text-lg">
                         🤖
                     </div>
-                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
+                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
                 </div>
                 <div>
-                    <h2 class="text-sm font-bold text-slate-800">Asistente InmoIA</h2>
-                    <p class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
-                        ● En línea (Base de Datos Activa)
+                    <h2 class="text-sm font-bold text-slate-800 tracking-tight">Asistente InmoIA</h2>
+                    <p class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                        ● Base de Datos Conectada
                     </p>
                 </div>
             </div>
-            <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-indigo-100/50 uppercase tracking-wider">
-                v4.0 Premium
+            <span class="bg-slate-100 text-slate-600 text-[9px] font-bold px-2.5 py-1 rounded-md border border-slate-200/60 uppercase tracking-wider">
+                SaaS v4.0
             </span>
         </header>
 
-        <div class="bg-slate-50 border-b border-slate-100 px-5 py-3 flex flex-col gap-0.5 shadow-inner shrink-0">
-            <div id="uiDireccion" class="text-xs font-bold text-slate-800 truncate">
-                📍 Cargando propiedad...
-            </div>
-            <div id="uiPrecios" class="text-[11px] font-medium text-indigo-600">
-                Por favor espere.
+        <div class="px-4 py-3 bg-white border-b border-slate-100 shadow-sm shrink-0 relative z-10">
+            <div class="bg-slate-50 border border-slate-200/60 rounded-xl p-3 flex flex-col gap-1">
+                <div id="uiDireccion" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    📍 Cargando propiedad...
+                </div>
+                <div id="uiPrecios" class="text-[11px] font-semibold text-indigo-600 bg-indigo-50/60 px-2 py-1 rounded-md w-max border border-indigo-100/40">
+                    Por favor espere.
+                </div>
             </div>
         </div>
 
-        <main id="chatContainer" class="flex-1 overflow-y-auto p-5 space-y-3.5 no-scrollbar bg-gradient-to-b from-white to-slate-50/40 pb-28">
+        <main id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar chat-bg pb-28">
             <div class="flex justify-start items-end gap-2">
-                <div class="bg-slate-100 text-slate-800 text-xs p-3.5 rounded-2xl rounded-bl-none max-w-[85%] shadow-sm border border-slate-200/40 leading-relaxed">
+                <div class="bg-white text-slate-800 text-xs p-3.5 rounded-2xl rounded-bl-none max-w-[85%] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-200/60 leading-relaxed">
                     ¡Hola! 👋 Soy el asistente inteligente. Estoy leyendo la ficha cargada por la inmobiliaria para responderte cualquier duda de forma exacta.
                 </div>
             </div>
         </main>
 
-        <div class="floating-action-area absolute bottom-[68px] left-0 w-full px-4 py-2 bg-gradient-to-t from-slate-50 via-slate-50/90 to-transparent z-10 flex justify-center">
-            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-md shadow-indigo-600/20 transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.98]" onclick="abrirModal()">
+        <div class="absolute bottom-[68px] left-0 w-full px-4 py-3 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent z-10 flex justify-center">
+            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.99] cursor-pointer" onclick="abrirModal()">
                 📅 Agendar Visita en Persona
             </button>
         </div>
 
-        <footer class="p-3 border-t border-slate-100 bg-white sticky bottom-0 z-10 shrink-0">
-            <div class="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200/60 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-sm transition-all duration-150">
+        <footer class="p-3 border-t border-slate-100 bg-white sticky bottom-0 z-10 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.02)]">
+            <div class="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200 focus-within:border-indigo-500 focus-within:bg-white focus-within:shadow-md focus-within:shadow-indigo-600/5 transition-all duration-200">
                 <input 
                     type="text" 
                     id="userInput" 
-                    placeholder="Preguntá lo que quieras..." 
-                    class="flex-1 bg-transparent text-xs text-slate-800 px-3 py-2 outline-none placeholder-slate-400 font-medium"
+                    placeholder="Preguntá lo que quieras sobre este inmueble..." 
+                    class="flex-1 bg-transparent text-xs text-slate-800 px-3 py-2.5 outline-none placeholder-slate-400 font-medium"
                     onkeypress="handleKeyPress(event)"
                 >
-                <button onclick="processUserMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-lg transition-colors duration-150 shadow-sm shrink-0 flex items-center justify-center">
+                <button onclick="processUserMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-lg transition-all duration-150 shadow-md shadow-indigo-600/20 shrink-0 flex items-center justify-center cursor-pointer active:scale-95">
                     <svg class="w-3.5 h-3.5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
                     </svg>
@@ -85,7 +94,7 @@
         </footer>
 
         <div id="leadModal" class="lead-modal absolute inset-0 bg-slate-900/60 backdrop-blur-sm z-20 hidden justify-center items-end transition-all duration-300">
-            <div class="bg-white w-full rounded-t-3xl p-5 shadow-2xl border-t border-slate-100 transform translate-y-0 transition-transform duration-300">
+            <div class="bg-white w-full rounded-t-3xl p-5 shadow-2xl border-t border-slate-100">
                 <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-4"></div>
                 
                 <h3 class="text-sm font-bold text-slate-800 mb-1">📋 Datos de Contacto</h3>
@@ -100,18 +109,16 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">¿Cumplís con los requisitos?</label>
-                        <div class="relative">
-                            <select id="leadReq" class="w-full text-xs p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 bg-slate-50 appearance-none font-medium text-slate-700">
-                                <option value="si">Sí, tengo los recibos / garantías</option>
-                                <option value="no">No llego con los requisitos</option>
-                            </select>
-                        </div>
+                        <select id="leadReq" class="w-full text-xs p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 bg-slate-50 font-medium text-slate-700">
+                            <option value="si">Sí, tengo los recibos / garantías</option>
+                            <option value="no">No llego con los requisitos</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="flex gap-2.5 mt-5">
-                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 border-none flex-1 py-3 rounded-xl font-bold text-xs transition-colors" onclick="cerrarModal()">Volver al chat</button>
-                    <button class="bg-emerald-600 hover:bg-emerald-700 text-white border-none flex-2 py-3 rounded-xl font-bold text-xs shadow-md shadow-emerald-600/10 transition-colors" onclick="submitLead()">Confirmar y Agendar</button>
+                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 border-none flex-1 py-3 rounded-xl font-bold text-xs transition-colors cursor-pointer" onclick="cerrarModal()">Volver al chat</button>
+                    <button class="bg-emerald-600 hover:bg-emerald-700 text-white border-none flex-2 py-3 rounded-xl font-bold text-xs shadow-md shadow-emerald-600/10 transition-colors cursor-pointer" onclick="submitLead()">Confirmar y Agendar</button>
                 </div>
             </div>
         </div>
@@ -160,11 +167,10 @@
             appendBubble(text, 'user');
             inputEl.value = '';
 
-            // Burbuja temporal de carga estética
             const container = document.getElementById('chatContainer');
             const loadingEl = document.createElement('div');
-            loadingEl.className = "flex justify-start items-end gap-2 opacity-60";
-            loadingEl.innerHTML = `<div class="bg-slate-100 text-slate-500 text-[11px] px-3.5 py-2 rounded-full border border-slate-200/30 italic">Pensando respuesta...</div>`;
+            loadingEl.className = "flex justify-start items-end gap-2 opacity-70 animate-pulse";
+            loadingEl.innerHTML = `<div class="bg-white text-slate-400 text-[11px] px-4 py-2 rounded-full border border-slate-200/60 shadow-sm italic">Pensando respuesta...</div>`;
             container.appendChild(loadingEl);
             container.scrollTop = container.scrollHeight;
 
@@ -192,13 +198,13 @@
         function appendBubble(text, sender) {
             const container = document.getElementById('chatContainer');
             const wrapper = document.createElement('div');
-            wrapper.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} items-end gap-2 animate-fade-in`;
+            wrapper.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} items-end gap-2`;
 
             const bubble = document.createElement('div');
             if (sender === 'user') {
-                bubble.className = "bg-indigo-600 text-white text-xs p-3.5 rounded-2xl rounded-br-none max-w-[85%] shadow-sm leading-relaxed";
+                bubble.className = "bg-indigo-600 text-white text-xs p-3.5 rounded-2xl rounded-br-none max-w-[85%] shadow-md shadow-indigo-600/10 leading-relaxed";
             } else {
-                bubble.className = "bg-slate-100 text-slate-800 text-xs p-3.5 rounded-2xl rounded-bl-none max-w-[85%] shadow-sm border border-slate-200/40 leading-relaxed";
+                bubble.className = "bg-white text-slate-800 text-xs p-3.5 rounded-2xl rounded-bl-none max-w-[85%] shadow-[0_2px_8px_rgba(0,0,0,0.03)] border border-slate-200/60 leading-relaxed";
             }
             bubble.innerHTML = text;
             
@@ -207,14 +213,8 @@
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
         }
 
-        function abrirModal() { 
-            const modal = document.getElementById('leadModal');
-            modal.style.display = 'flex'; 
-        }
-        function cerrarModal() { 
-            const modal = document.getElementById('leadModal');
-            modal.style.display = 'none'; 
-        }
+        function abrirModal() { document.getElementById('leadModal').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('leadModal').style.display = 'none'; }
 
         function submitLead() {
             const name = document.getElementById('leadName').value.trim();
@@ -238,7 +238,7 @@
             const msg = `Hola! Vengo filtrado desde el asistente de IA para el inmueble en ${propiedadData.direccion}. Mi nombre es ${name}, cuento con las garantías solicitadas y quiero coordinar la visita comercial.`;
             
             actionArea.innerHTML = `
-                <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-md shadow-emerald-600/20 transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.98]" onclick="window.open('https://wa.me/5492914441212?text=${encodeURIComponent(msg)}', '_blank')">
+                <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.99] cursor-pointer" onclick="window.open('https://wa.me/5492914441212?text=${encodeURIComponent(msg)}', '_blank')">
                     🟢 Abrir WhatsApp del Martillero
                 </button>
             `;
