@@ -4,300 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InmoAsistente Premium v4.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-main: #f3f4f6;
-            --surface: #ffffff;
-            --text-dark: #111827;
-            --text-muted: #6b7280;
-            --brand: #4f46e5;
-            --brand-light: #e0e7ff;
-            --success: #10b981;
-            --border: #e5e7eb;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .smartphone-mockup {
-            width: 100%;
-            max-width: 380px;
-            height: 720px;
-            background: var(--surface);
-            border-radius: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            border: 10px solid var(--text-dark);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .status-bar {
-            height: 24px;
-            background: var(--surface);
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 25px 0 25px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .app-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: white;
-            z-index: 10;
-        }
-
-        .avatar-ia {
-            width: 40px;
-            height: 40px;
-            background: var(--brand-light);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            color: var(--brand);
-            border: 2px solid var(--brand);
-        }
-
-        .header-info h2 {
-            font-size: 0.95rem;
-            font-weight: 700;
-        }
-
-        .header-info p {
-            font-size: 0.75rem;
-            color: var(--success);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .property-banner {
-            background: #f9fafb;
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--border);
-            z-index: 10;
-        }
-
-        .prop-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .prop-meta {
-            font-size: 0.8rem;
-            color: var(--brand);
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        .chat-container {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #fafafa;
-            padding-bottom: 80px;
-        }
-
-        .bubble {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 18px;
-            font-size: 0.88rem;
-            line-height: 1.4;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .bubble.ai {
-            background: white;
-            color: var(--text-dark);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            border: 1px solid var(--border);
-        }
-
-        .bubble.user {
-            background: var(--brand);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .floating-action-area {
-            position: absolute;
-            bottom: 60px;
-            left: 0;
-            width: 100%;
-            padding: 10px 15px;
-            background: linear-gradient(to top, rgba(250,250,250,1) 70%, rgba(250,250,250,0) 100%);
-            z-index: 5;
-        }
-
-        .btn-agendar {
-            background: var(--brand);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.88rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-            transition: 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .lead-modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 20;
-            display: none;
-            justify-content: center;
-            align-items: flex-end;
-        }
-
-        .modal-content {
-            background: white;
-            width: 100%;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 24px 20px;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        .modal-content h3 { font-size: 1.05rem; margin-bottom: 5px; color: var(--text-dark); }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; color: var(--text-muted); }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; outline: none; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-cancel { background: #f3f4f6; color: var(--text-dark); border: none; flex: 1; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-        .btn-confirm { background: var(--success); color: white; border: none; flex: 2; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-
-        .input-area {
-            padding: 12px 15px; background: white; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; z-index: 10;
-        }
-        .input-area input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 0.9rem; outline: none; background: #f9fafb; }
-        .send-btn { background: var(--brand); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-weight: bold; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        body { font-family: 'Inter', sans-serif; }
+        /* Esconder barra de scroll manteniendo funcionalidad */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 flex justify-center items-center h-screen w-full antialiased p-0 sm:p-4">
 
-    <div class="smartphone-mockup">
-        <div class="status-bar">
+    <div class="w-full max-w-md h-full bg-white shadow-2xl flex flex-col relative overflow-hidden md:h-[92vh] md:rounded-3xl md:border md:border-slate-200">
+        
+        <div class="bg-white px-6 pt-2 pb-1 flex justify-between items-center text-[11px] font-bold text-slate-800 shrink-0">
             <span>18:40</span>
-            <span>LTE 🔋</span>
+            <span class="flex items-center gap-1">LTE 🔋</span>
         </div>
 
-        <div class="app-header">
-            <div class="avatar-ia">🤖</div>
-            <div class="header-info">
-                <h2>Asistente InmoIA</h2>
-                <p>● En línea (Base de Datos Activa)</p>
+        <header class="bg-white border-b border-slate-100 px-5 py-3 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/95 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center border border-indigo-100 shadow-sm text-lg">
+                        🤖
+                    </div>
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800">Asistente InmoIA</h2>
+                    <p class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+                        ● En línea (Base de Datos Activa)
+                    </p>
+                </div>
+            </div>
+            <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-indigo-100/50 uppercase tracking-wider">
+                v4.0 Premium
+            </span>
+        </header>
+
+        <div class="bg-slate-50 border-b border-slate-100 px-5 py-3 flex flex-col gap-0.5 shadow-inner shrink-0">
+            <div id="uiDireccion" class="text-xs font-bold text-slate-800 truncate">
+                📍 Cargando propiedad...
+            </div>
+            <div id="uiPrecios" class="text-[11px] font-medium text-indigo-600">
+                Por favor espere.
             </div>
         </div>
 
-        <div class="property-banner">
-            <div id="uiDireccion" class="prop-title">Cargando propiedad...</div>
-            <div id="uiPrecios" class="prop-meta">Por favor espere.</div>
-        </div>
-
-        <div id="chatContainer" class="chat-container">
-            <div class="bubble ai">
-                ¡Hola! 👋 Soy el asistente inteligente. Estoy leyendo la ficha cargada por la inmobiliaria para responderte cualquier duda de forma exacta.
+        <main id="chatContainer" class="flex-1 overflow-y-auto p-5 space-y-3.5 no-scrollbar bg-gradient-to-b from-white to-slate-50/40 pb-28">
+            <div class="flex justify-start items-end gap-2">
+                <div class="bg-slate-100 text-slate-800 text-xs p-3.5 rounded-2xl rounded-bl-none max-w-[85%] shadow-sm border border-slate-200/40 leading-relaxed">
+                    ¡Hola! 👋 Soy el asistente inteligente. Estoy leyendo la ficha cargada por la inmobiliaria para responderte cualquier duda de forma exacta.
+                </div>
             </div>
-        </div>
+        </main>
 
-        <div class="floating-action-area">
-            <button class="btn-agendar" onclick="abrirModal()">
+        <div class="floating-action-area absolute bottom-[68px] left-0 w-full px-4 py-2 bg-gradient-to-t from-slate-50 via-slate-50/90 to-transparent z-10 flex justify-center">
+            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-md shadow-indigo-600/20 transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.98]" onclick="abrirModal()">
                 📅 Agendar Visita en Persona
             </button>
         </div>
 
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="Preguntá lo que quieras..." onkeypress="handleKeyPress(event)">
-            <button class="send-btn" onclick="processUserMessage()">➔</button>
-        </div>
+        <footer class="p-3 border-t border-slate-100 bg-white sticky bottom-0 z-10 shrink-0">
+            <div class="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200/60 focus-within:border-indigo-400 focus-within:bg-white focus-within:shadow-sm transition-all duration-150">
+                <input 
+                    type="text" 
+                    id="userInput" 
+                    placeholder="Preguntá lo que quieras..." 
+                    class="flex-1 bg-transparent text-xs text-slate-800 px-3 py-2 outline-none placeholder-slate-400 font-medium"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button onclick="processUserMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-lg transition-colors duration-150 shadow-sm shrink-0 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                    </svg>
+                </button>
+            </div>
+        </footer>
 
-        <div id="leadModal" class="lead-modal">
-            <div class="modal-content">
-                <h3>📋 Datos de Contacto</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 15px;">
+        <div id="leadModal" class="lead-modal absolute inset-0 bg-slate-900/60 backdrop-blur-sm z-20 hidden justify-center items-end transition-all duration-300">
+            <div class="bg-white w-full rounded-t-3xl p-5 shadow-2xl border-t border-slate-100 transform translate-y-0 transition-transform duration-300">
+                <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-4"></div>
+                
+                <h3 class="text-sm font-bold text-slate-800 mb-1">📋 Datos de Contacto</h3>
+                <p class="text-[11px] text-slate-400 font-medium mb-4">
                     Completá tus datos para validar los requisitos de la propiedad con la inmobiliaria.
                 </p>
-                <div class="form-group">
-                    <label>Nombre Completo</label>
-                    <input type="text" id="leadName" placeholder="Juan Pérez">
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Nombre Completo</label>
+                        <input type="text" id="leadName" placeholder="Juan Pérez" class="w-full text-xs p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 bg-slate-50 focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">¿Cumplís con los requisitos?</label>
+                        <div class="relative">
+                            <select id="leadReq" class="w-full text-xs p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 bg-slate-50 appearance-none font-medium text-slate-700">
+                                <option value="si">Sí, tengo los recibos / garantías</option>
+                                <option value="no">No llego con los requisitos</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>¿Cumplís con los requisitos exigidos?</label>
-                    <select id="leadReq">
-                        <option value="si">Sí, tengo los recibos/garantías</option>
-                        <option value="no">No llego con los requisitos</option>
-                    </select>
-                </div>
-                <div class="modal-buttons">
-                    <button class="btn-cancel" onclick="cerrarModal()">Volver al chat</button>
-                    <button class="btn-confirm" onclick="submitLead()">Confirmar y Agendar</button>
+
+                <div class="flex gap-2.5 mt-5">
+                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 border-none flex-1 py-3 rounded-xl font-bold text-xs transition-colors" onclick="cerrarModal()">Volver al chat</button>
+                    <button class="bg-emerald-600 hover:bg-emerald-700 text-white border-none flex-2 py-3 rounded-xl font-bold text-xs shadow-md shadow-emerald-600/10 transition-colors" onclick="submitLead()">Confirmar y Agendar</button>
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
         let propiedadData = null;
+        const API_BASE_URL = "https://inmo-asistente-ia.onrender.com/api";
 
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const propiedadId = urlParams.get('id') || 1;
 
             try {
-                const response = await fetch(`https://inmo-asistente-ia.onrender.com/api/propiedades/${propiedadId}`);
+                const response = await fetch(`${API_BASE_URL}/propiedades/${propiedadId}`);
                 if (!response.ok) throw new Error("No se encontró la propiedad");
                 
                 propiedadData = await response.json();
                 
                 document.getElementById('uiDireccion').innerText = `📍 ${propiedadData.direccion}`;
-                document.getElementById('uiPrecios').innerText = `Alquiler: $${propiedadData.precio} | Expensas: $${propiedadData.expensas}`;
+                document.getElementById('uiPrecios').innerText = `Alquiler: $${Math.round(propiedadData.precio)} | Expensas: $${Math.round(propiedadData.expensas)}`;
                 
                 appendBubble(`Ya cargué toda la información sobre el inmueble en <strong>${propiedadData.direccion}</strong>. ¿Qué te gustaría consultar?`, 'ai');
             } catch (error) {
@@ -324,13 +160,22 @@
             appendBubble(text, 'user');
             inputEl.value = '';
 
+            // Burbuja temporal de carga estética
+            const container = document.getElementById('chatContainer');
+            const loadingEl = document.createElement('div');
+            loadingEl.className = "flex justify-start items-end gap-2 opacity-60";
+            loadingEl.innerHTML = `<div class="bg-slate-100 text-slate-500 text-[11px] px-3.5 py-2 rounded-full border border-slate-200/30 italic">Pensando respuesta...</div>`;
+            container.appendChild(loadingEl);
+            container.scrollTop = container.scrollHeight;
+
             try {
-                // 🛠️ CORREGIDO: Pegamos a /api/chat/${propiedadId} y mandamos el objeto con la clave "mensaje"
-                const response = await fetch(`https://inmo-asistente-ia.onrender.com/api/chat/${propiedadId}`, {
+                const response = await fetch(`${API_BASE_URL}/chat/${propiedadId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ mensaje: text })
                 });
+
+                container.removeChild(loadingEl);
 
                 if (!response.ok) throw new Error("Error en el servidor");
 
@@ -338,6 +183,7 @@
                 appendBubble(data.respuesta, 'ai');
 
             } catch (error) {
+                if (container.contains(loadingEl)) container.removeChild(loadingEl);
                 console.error(error);
                 appendBubble("⚠️ Hubo un problema al conectar con el servidor de IA.", 'ai');
             }
@@ -345,15 +191,30 @@
 
         function appendBubble(text, sender) {
             const container = document.getElementById('chatContainer');
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} items-end gap-2 animate-fade-in`;
+
             const bubble = document.createElement('div');
-            bubble.className = `bubble ${sender}`;
+            if (sender === 'user') {
+                bubble.className = "bg-indigo-600 text-white text-xs p-3.5 rounded-2xl rounded-br-none max-w-[85%] shadow-sm leading-relaxed";
+            } else {
+                bubble.className = "bg-slate-100 text-slate-800 text-xs p-3.5 rounded-2xl rounded-bl-none max-w-[85%] shadow-sm border border-slate-200/40 leading-relaxed";
+            }
             bubble.innerHTML = text;
-            container.appendChild(bubble);
-            container.scrollTop = container.scrollHeight;
+            
+            wrapper.appendChild(bubble);
+            container.appendChild(wrapper);
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
         }
 
-        function abrirModal() { document.getElementById('leadModal').style.display = 'flex'; }
-        function cerrarModal() { document.getElementById('leadModal').style.display = 'none'; }
+        function abrirModal() { 
+            const modal = document.getElementById('leadModal');
+            modal.style.display = 'flex'; 
+        }
+        function cerrarModal() { 
+            const modal = document.getElementById('leadModal');
+            modal.style.display = 'none'; 
+        }
 
         function submitLead() {
             const name = document.getElementById('leadName').value.trim();
@@ -377,7 +238,7 @@
             const msg = `Hola! Vengo filtrado desde el asistente de IA para el inmueble en ${propiedadData.direccion}. Mi nombre es ${name}, cuento con las garantías solicitadas y quiero coordinar la visita comercial.`;
             
             actionArea.innerHTML = `
-                <button class="btn-agendar" style="background-color: var(--success);" onclick="window.open('https://wa.me/5492910000000?text=${encodeURIComponent(msg)}', '_blank')">
+                <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-md shadow-emerald-600/20 transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.98]" onclick="window.open('https://wa.me/5492914441212?text=${encodeURIComponent(msg)}', '_blank')">
                     🟢 Abrir WhatsApp del Martillero
                 </button>
             `;
